@@ -17,6 +17,15 @@
       "skills": [
         "./skills/image-toolkit"
       ]
+    },
+    {
+      "name": "skill-bootstrap",
+      "description": "给 Python 编写的 Agent Skill 加上运行时自举：首次调用自动补齐依赖、路径自动探测，支持内网离线安装",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/skill-bootstrap"
+      ]
     }
   ]
 }

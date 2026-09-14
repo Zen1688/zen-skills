@@ -11,6 +11,7 @@
 | 技能 | 说明 | 主要依赖 |
 |---|---|---|
 | [image-toolkit](skills/image-toolkit/) | 离线图片处理工具箱：格式转换 / OCR 文字识别 / 内容分类 / 导出 Office 文档。**全程无网络调用**，适配国内无网、内网环境 | Pillow, openpyxl, python-docx, reportlab, numpy, rapidocr-onnxruntime |
+| [skill-bootstrap](skills/skill-bootstrap/) | 给 Python 编写的 skill 加上**运行时自举**：首次调用自动补齐依赖、路径自动探测，支持纯离线/内网安装。也是本仓库其他技能依赖引导机制的来源 | 无（纯标准库） |
 
 ---
 
@@ -61,6 +62,13 @@ cp -r zen-skills/skills/image-toolkit /c/Users/<你的用户名>/.workbuddy/skil
 
 ```
 /plugin install image-toolkit@zen-skills
+```
+
+本仓库目前提供两个插件，按需安装：
+
+```
+/plugin install image-toolkit@zen-skills     # 离线图片处理工具箱
+/plugin install skill-bootstrap@zen-skills   # skill 依赖自动引导（开发用）
 ```
 
 也可以用交互式菜单：`/plugin` → `Browse and install plugins` → `zen-skills` → `image-toolkit` → `Install now`。
@@ -130,6 +138,9 @@ IMAGE_TOOLKIT_NO_AUTO_INSTALL=1
 > 技能的文件结构与加载方式，不包含运行时依赖管理；`pip` 也没有
 > post-install 钩子，两个宿主都没有「安装后自动执行」的通用机制。
 > 因此本仓库把补齐依赖做成**首次调用时的惰性引导** —— 技能目录里不需要任何宿主专有配置，两个生态行为完全一致。
+>
+> 这套机制已抽成独立技能 [**skill-bootstrap**](skills/skill-bootstrap/)，
+> 任何 Python 技能都可以用它一键接入。详见该技能的 `SKILL.md` 与 `references/integration.md`。
 
 ---
 
@@ -159,6 +170,9 @@ description: 技能做什么、什么时候用（决定 AI 何时触发该技能
 ```bash
 mkdir -p skills/<new-skill>
 # 编写 skills/<new-skill>/SKILL.md
+# 若为 Python 技能：用 skill-bootstrap 装上依赖自动引导（含路径自动探测）
+python skills/skill-bootstrap/scripts/init_skill_runtime.py skills/<new-skill> \
+    --core "PIL=Pillow" --entry main.py:core --dry-run
 git add skills/<new-skill>
 git commit -m "feat: 新增 <new-skill> 技能"
 git push
@@ -179,7 +193,8 @@ git push
 约定：
 
 - 一个技能一个目录，目录名与 frontmatter 的 `name` 保持一致
-- 脚本内部**不要硬编码绝对路径**，用 `Path(__file__).resolve().parent` 定位自身
+- Python 技能请用 [skill-bootstrap](skills/skill-bootstrap/) 接入依赖自动引导；
+  脚本内部**不要硬编码绝对路径**，用 `Path(__file__).resolve().parent` 定位自身
 - 不要依赖宿主专有字段，保持技能平台中立
 - 提交前确认没有 `__pycache__`、虚拟环境、日志等产物入库（`.gitignore` 已覆盖）
 
