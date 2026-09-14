@@ -38,40 +38,90 @@ SKILL_NAME = SKILL_ROOT.name
 
 # --------------------------------------------------------- Python 探测
 
-def _looks_like_skill_python(exe):
-    """判断一个 python 是否装了本 skill 的核心依赖"""
+RUNTIME_ENV_VAR = "IMAGE_TOOLKIT_RUNTIME_DIR"
+
+# 本 skill 的核心依赖模块 (用于判定解释器是否"装好可用")
+CORE_MODULES = ("PIL", "openpyxl", "docx", "reportlab")
+
+
+def venv_python(venv_dir):
+    """返回 venv 内的 python 可执行文件路径; 不存在返回 None"""
+    v = Path(venv_dir)
+    for rel in ("Scripts/python.exe",      # Windows
+                "bin/python",              # POSIX
+                "bin/python3"):
+        p = v / rel
+        if p.is_file():
+            return str(p)
+    return None
+
+
+def runtime_venv_dirs():
+    """依赖运行时 venv 的候选位置, 按优先级返回 [(venv 路径, 说明)]。
+
+    这些目录由 bootstrap.py 在首次调用时自动创建;
+    也可用 IMAGE_TOOLKIT_RUNTIME_DIR 显式指定 (内网可指向固定盘符)。
+    """
+    out = []
+    envd = os.environ.get(RUNTIME_ENV_VAR)
+    if envd:
+        out.append((Path(envd).expanduser() / "venv",
+                    f"环境变量 {RUNTIME_ENV_VAR}"))
+    out.append((Path.home() / ".image-toolkit" / "venv",
+                "用户级运行时 venv"))
+    out.append((SKILL_ROOT / ".runtime" / "venv",
+                "skill 本地 .runtime/venv"))
+    return out
+
+
+def runtime_active():
+    """返回当前实际存在的运行时 venv 信息, 没有则 None"""
+    for vdir, desc in runtime_venv_dirs():
+        py = venv_python(vdir)
+        if py:
+            return {"venv": str(vdir), "python": py, "source": desc}
+    return None
+
+
+def probe_python(exe, mods=CORE_MODULES):
+    """用子进程检查某解释器是否具备指定模块。
+
+    用 importlib.util.find_spec 而非真的 import ——
+    避免为了探测就把 onnxruntime 这类重模块加载起来 (省 2~3 秒)。
+    """
     if not exe or not os.path.isfile(exe):
         return False
     import subprocess
+    code = ("import importlib.util as u, sys;"
+            "sys.exit(0 if all(u.find_spec(m) for m in sys.argv[1:]) else 1)")
     try:
-        rc = subprocess.call(
-            [exe, "-c", "import PIL, openpyxl, docx, reportlab"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
-        return rc == 0
+        return subprocess.call([exe, "-c", code, *mods],
+                               stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL, timeout=60) == 0
     except Exception:
         return False
 
 
-def find_python(prefer_with_deps=True):
-    """按优先级探测可用的 Python 解释器。
+def _looks_like_skill_python(exe):
+    """判断一个 python 是否装了本 skill 的核心依赖"""
+    return probe_python(exe, CORE_MODULES)
 
-    参数:
-      prefer_with_deps=True  —— 优先返回已装依赖的解释器 (运行 skill 时用)
-      prefer_with_deps=False —— 只返回当前解释器, 不做跨环境搜索
-                                (安装依赖时用, 避免装错地方)
 
-    返回 (解释器路径, 说明)。
+def iter_candidates():
+    """候选解释器 [(解释器路径, 说明)], 去重后按优先级返回。
+
+    顺序: 当前解释器 -> 运行时 venv -> 宿主托管 venv -> PATH。
+    bootstrap.py 也复用此函数, 保持「候选来源」只有一处定义。
     """
-    cands = []
+    cands = [(sys.executable, "当前运行的解释器")]
 
-    if not prefer_with_deps:
-        # 安装场景: 就用当前解释器, 不跨环境找
-        return (sys.executable, "当前运行的解释器")
+    # 1) 依赖运行时 venv (bootstrap 创建或用户指定)
+    for vdir, desc in runtime_venv_dirs():
+        py = venv_python(vdir)
+        if py:
+            cands.append((py, desc))
 
-    # 1) 当前解释器
-    cands.append((sys.executable, "当前运行的解释器"))
-
-    # 2) 宿主托管的 venv (若存在则优先使用, 省去用户手动装依赖)
+    # 2) 宿主托管的 venv (若存在, 省去用户手动装依赖)
     home = Path.home()
     for rel in [
         ".workbuddy/binaries/python/envs/default/Scripts/python.exe",   # win
@@ -89,8 +139,7 @@ def find_python(prefer_with_deps=True):
         if exe:
             cands.append((exe, f"PATH 中的 {name}"))
 
-    # 去重并验证
-    seen, good, fallback = set(), [], None
+    seen, out = set(), []
     for exe, desc in cands:
         try:
             key = str(Path(exe).resolve()).lower()
@@ -99,17 +148,31 @@ def find_python(prefer_with_deps=True):
         if key in seen:
             continue
         seen.add(key)
-        has_deps = _looks_like_skill_python(exe)
-        if has_deps:
-            good.append((exe, desc + " [依赖齐全]"))
-        elif fallback is None:
-            fallback = (exe, desc + " [未验证依赖]")
+        out.append((exe, desc))
+    return out
 
-    if good:
-        return good[0]
-    if fallback:
-        return fallback
-    return (sys.executable, "回退到当前解释器")
+
+def find_python(prefer_with_deps=True):
+    """按优先级探测可用的 Python 解释器。
+
+    参数:
+      prefer_with_deps=True  —— 优先返回已装依赖的解释器 (运行 skill 时用)
+      prefer_with_deps=False —— 只返回当前解释器, 不做跨环境搜索
+                                (安装依赖时用, 避免装错地方)
+
+    返回 (解释器路径, 说明)。
+    """
+    if not prefer_with_deps:
+        # 安装场景: 就用当前解释器, 不跨环境找
+        return (sys.executable, "当前运行的解释器")
+
+    fallback = None
+    for exe, desc in iter_candidates():
+        if probe_python(exe, CORE_MODULES):
+            return (exe, desc + " [依赖齐全]")
+        if fallback is None:
+            fallback = (exe, desc + " [未验证依赖]")
+    return fallback or (sys.executable, "回退到当前解释器")
 
 
 def find_skill_scripts():
@@ -139,6 +202,7 @@ def collect():
         "python_source": py_desc,
         "platform": sys.platform,
         "has_deps": _looks_like_skill_python(py),
+        "runtime": runtime_active(),
     }
 
 
@@ -154,7 +218,10 @@ def out_human(info):
     print(f"  Python:       {info['python']}")
     print(f"    (来源: {info['python_source']})")
     print(f"  依赖状态:     "
-          f"{'齐全' if info['has_deps'] else '不齐全 —— 需先安装依赖'}")
+          f"{'齐全' if info['has_deps'] else '不齐全 —— 首次调用脚本时会自动安装'}")
+    if info.get("runtime"):
+        print(f"  运行时 venv:  {info['runtime']['venv']}")
+        print(f"    (来源: {info['runtime']['source']})")
 
     print("\n  shell 用法 (bash):")
     print('    eval "$(<本脚本> env.py --sh)"')
@@ -164,8 +231,9 @@ def out_human(info):
     print('    python env.py --run pipeline.py ./图片 --out ./结果')
 
     if not info["has_deps"]:
-        print("\n  \u26a0 依赖不齐全, 请先执行自检查看明细:")
-        print(f'    "{info["python"]}" "{info["scripts"]}/selftest.py"')
+        print("\n  \u26a0 依赖不齐全。首次调用任一脚本时会自动安装;")
+        print("     也可以先手动补齐 (可看明细):")
+        print(f'    "{info["python"]}" "{info["scripts"]}/bootstrap.py"')
     return 0
 
 

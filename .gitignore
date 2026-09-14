@@ -29,9 +29,11 @@ deploy_bundle/
 *.zip
 
 # ---------- skill 运行时产物 ----------
+.runtime/
 *_out/
 offline_verify/
 final_check/
+wheelhouse/
 
 # ---------- 编辑器 / 系统 ----------
 .vscode/

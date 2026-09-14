@@ -8,8 +8,8 @@
 | Python | 3.8+ |
 | 网络 | 运行时不需网络 |
 
-macOS / Linux 使用前建议先跑一次 `setup_env.py --check`，
-确认中文字体与 OCR 引擎探测正常。
+**依赖不用手动装**：首次调用任一脚本时会自动补齐（详见 `SKILL.md` 的「依赖：首次调用自动安装」）。
+macOS / Linux 使用前建议先跑一次 `setup_env.py --check`，确认中文字体与 OCR 引擎探测正常。
 
 ## 30 秒跑通
 
@@ -53,6 +53,32 @@ python scripts/env.py --run pipeline.py 你的图片目录 --out ./结果 --to d
 
 > `env.py` 会自动探测 skill 位置与可用的 Python 解释器，并验证依赖完整性。
 > skill 被搬到任何目录、装在任何 Python 下都能正常工作。
+
+## 依赖从哪来（首次调用自动装）
+
+**不需要手动 `pip install`。** 首次调用任一脚本时 `bootstrap.py` 会自动补齐：
+
+| 情况 | 行为 |
+|---|---|
+| 依赖齐全 | 立即返回，几乎无额外开销 |
+| 本机已有备好依赖的解释器 | 直接复用，不重复安装 |
+| 需要安装 | 建独立 venv → 装依赖 → 用新解释器重跑当前脚本 |
+| 有本地 wheel 目录 | `--no-index` **纯离线安装**，不联网 |
+| 无网又无本地包 | 立即报错并给指引，不挂起 |
+
+默认装到 `~/.image-toolkit/venv`（跨副本共享、不污染宿主环境）。
+只装核心（`convert.py` / `export.py`）约 26MB；含 OCR（`pipeline.py` / `ocr.py` / `classify.py` / `selftest.py`）约 95MB。
+
+```bash
+# 想提前装好
+"$PY" "$SK/bootstrap.py"
+# 只检查
+"$PY" "$SK/bootstrap.py" --check
+# 关掉自动安装（改为只提示不下载）
+IMAGE_TOOLKIT_NO_AUTO_INSTALL=1
+```
+
+内网无网：把 wheel 放到 `<skill>/wheelhouse/`，引导器会自动发现并离线安装。
 
 ## 四类典型场景
 
@@ -171,7 +197,8 @@ Excel 的「识别明细」sheet 会尝试还原表格行列结构。
 |---|---|
 | 脚本内部（`.py`） | 用 `Path(__file__).resolve().parent` 定位自身；用 `sys.executable` 取解释器 |
 | 文档中的 `$PY` / `$SK` | **变量引用**，由 `env.py` 自动填充 |
-| Python 解释器 | `env.py` 自动探测（当前解释器 → 托管 venv → PATH），并验证依赖完整性 |
+| Python 解释器 | `env.py` 自动探测（当前解释器 → 运行时 venv → 托管 venv → PATH），并验证依赖完整性 |
+| Python 依赖 | 首次调用自动补齐；默认装在 `~/.image-toolkit/venv`（`IMAGE_TOOLKIT_RUNTIME_DIR` 可改） |
 | 字体 / Tesseract | 按 `sys.platform` 查表探测，含兜底目录扫描 |
 
 ### 迁移后怎么用
@@ -196,14 +223,16 @@ python <skill>/scripts/env.py             # 应显示正确的 skill 路径与 P
 python <skill>/scripts/selftest.py        # 应 10/10 通过
 ```
 
-> 若 `env.py` 报「依赖不齐全」，说明该 Python 下没装依赖，
-> 先跑 `deploy_offline.py install` 或 `setup_env.py`。
+> 若 `env.py` 报「依赖不齐全」，不必手动装 —— 首次调用会自动补齐。
+> 想提前装好：`python <skill>/scripts/bootstrap.py`；
+> 内网机器见 `references/offline-deploy.md` 的 wheelhouse 做法。
 
 ## 常见问题
 
 | 问题 | 解决 |
 |---|---|
-| 提示无 OCR 引擎 | `"$PY" "$SK/setup_env.py" --with-rapidocr` |
+| 提示无 OCR 引擎 | 依赖没装全：跑 `"$PY" "$SK/bootstrap.py"`（自动装 RapidOCR） |
+| 首次运行停在「安装依赖」 | 正常（约 95MB 含 OCR）。不想自动装：`IMAGE_TOOLKIT_NO_AUTO_INSTALL=1` |
 | 识别结果为空 | 图可能确无文字，或分辨率太低 |
 | 分类不准 | 加 `--rules` 自定义；或把 `--threshold` 降到 0.2 |
 | 表格列错位 | 复杂表格（合并单元格）难免，建议人工复核 |

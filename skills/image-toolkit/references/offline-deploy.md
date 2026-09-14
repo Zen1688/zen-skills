@@ -20,6 +20,22 @@ python deploy_offline.py install --bundle ./bundle
 
 `install` 会自动完成：平台指纹校验 → 离线装依赖 → 装系统库（Linux）→ 自检 → 端到端冒烟测试。
 
+### 变体：跳过 install，靠 wheelhouse 自动装
+
+如果只想「把目录拷过去就能用」，不必在目标机跑 `install`：
+
+```bash
+# 有网机器: pack 会产出 bundle/packages/ 目录
+python deploy_offline.py pack --bundle ./bundle
+
+# 目标机器: 把整个 skill 目录搬过去, 并将 packages/ 拷成 <skill>/wheelhouse/
+# 之后首次调用任意脚本, bootstrap.py 会自动发现并【纯离线】安装
+python <skill>/scripts/pipeline.py ./图片 --out ./结果
+```
+
+`wheelhouse` 可以放在 `<skill>/`、skill 同级目录或当前工作目录；
+也可以用 `IMAGE_TOOLKIT_FIND_LINKS=<目录>` 显式指定。
+
 ## 二、三种模式说明
 
 | 命令 | 运行位置 | 作用 |
@@ -164,6 +180,12 @@ eval "$(python <skill>/scripts/env.py --sh)"
 # 得到 $SK 和 $PY; 若提示依赖不齐全, 说明还需装包, 见下
 ```
 
+也可以直接让引导器代劳（会自动走 `--no-index` 纯离线安装）：
+
+```bash
+IMAGE_TOOLKIT_FIND_LINKS=<bundle>/packages python <skill>/scripts/bootstrap.py
+```
+
 ### 6.2 完全手工执行
 
 ```bash
@@ -200,6 +222,8 @@ sudo apt install libgl1 libglib2.0-0 fonts-wqy-microhei
 | venv 拷过去不能用 | 路径或版本不一致 | 在目标机**重建 venv**，用 bundle 安装 |
 | OCR 模型加载失败 | wheel 不完整 | 重下 `rapidocr-onnxruntime`，校验约 12.3MB |
 | 自动装系统库失败 | 无 root 权限 | 加 `sudo` 重跑，或用 `--no-sysdeps` 后手工装 |
+| 首次调用时自动去联网下载 | 未检测到本地 wheel 目录 | 把 `packages/` 拷成 `<skill>/wheelhouse/`，或设 `IMAGE_TOOLKIT_FIND_LINKS` |
+| 不想让技能自动装依赖 | 自动安装默认开启 | 设 `IMAGE_TOOLKIT_NO_AUTO_INSTALL=1`，改为只提示 |
 
 ## 八、验证部署成功
 
@@ -235,6 +259,7 @@ python <skill>/scripts/selftest.py
 | 保证 | 说明 |
 |---|---|
 | 代码层面 | 所有脚本不 import requests / urllib / socket，无出网调用 |
+| 安装层面 | 有本地 wheel（`wheelhouse/` 或 `--find-links`）时，`pip` 走 `--no-index` 全程离线 |
 | 模型层面 | RapidOCR 的 ONNX 模型随 wheel 落盘，运行时加载本地文件 |
 | 实测验证 | `selftest.py` 在禁用 socket 的前提下跑通全流程 |
 | 图片隐私 | 全程本机处理，不外传 |

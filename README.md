@@ -94,27 +94,42 @@ claude plugin install image-toolkit@zen-skills
 
 ## 依赖安装（两种宿主通用）
 
-技能代码本身随仓库分发，但 Python 依赖需要执行一次安装。
+**通常不需要手动操作** —— 技能内置依赖引导器（`bootstrap.py`），
+首次调用任一功能脚本时会自动检测并补齐依赖。
+
+| 情况 | 行为 |
+|---|---|
+| 依赖齐全 | 立即返回，几乎无额外开销 |
+| 本机已有备好依赖的解释器 | 直接复用，不重复安装 |
+| 需要安装 | 建独立 venv → 装依赖 → 用新解释器重跑当前脚本 |
+| 有本地 wheel 目录 | `--no-index` **纯离线安装**，不联网 |
+| 无网又无本地包 | 立即报错并打印补齐方式，不挂起 |
+
+默认装到 `~/.image-toolkit/venv`：跨副本共享、只装一次，**不污染宿主环境**。
+装核心依赖约 26MB，含 OCR 约 95MB（仅首次）。
+
+想提前装好或排查：
 
 ```bash
-# 方式一：直接装到当前环境
-pip install Pillow openpyxl python-docx reportlab numpy rapidocr-onnxruntime
-
-# 方式二：用技能自带的安装器（支持国内镜像加速、可验证环境）
-python <技能目录>/scripts/setup_env.py --with-rapidocr
-
-# 验证
-python <技能目录>/scripts/setup_env.py --check
+python <技能目录>/scripts/bootstrap.py           # 缺什么装什么
+python <技能目录>/scripts/bootstrap.py --check   # 只检查
+python <技能目录>/scripts/selftest.py            # 端到端自检（10 项）
 ```
 
-安装完成后可用端到端自检确认：
+关掉自动安装（改为只提示不下载）：
 
 ```bash
-python <技能目录>/scripts/selftest.py
+IMAGE_TOOLKIT_NO_AUTO_INSTALL=1
 ```
 
-> **为什么需要手动装依赖**：Agent Skills 规范只约定技能的文件结构与加载方式，
-> 不包含运行时依赖管理。技能里的脚本在宿主中执行时，依赖必须已存在于当前 Python 环境。
+**完全离线安装**（内网）：把 wheel 目录放到 `<技能目录>/wheelhouse/`，
+或用 `IMAGE_TOOLKIT_FIND_LINKS=<wheel 目录>` 指定，引导器会自动发现并离线安装；
+离线依赖包用技能自带的 `deploy_offline.py pack` 生成。
+
+> **为什么用「首次调用引导」而不是安装后挂载**：Agent Skills 规范只约定
+> 技能的文件结构与加载方式，不包含运行时依赖管理；`pip` 也没有
+> post-install 钩子，两个宿主都没有「安装后自动执行」的通用机制。
+> 因此本仓库把补齐依赖做成**首次调用时的惰性引导** —— 技能目录里不需要任何宿主专有配置，两个生态行为完全一致。
 
 ---
 

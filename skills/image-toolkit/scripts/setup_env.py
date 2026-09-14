@@ -6,6 +6,12 @@
 说明: 本 skill 的**运行时完全离线**。此脚本只用于首次安装 Python 依赖,
 安装完成后即可断网使用。若目标机器已有依赖, 无需运行。
 
+**通常不需要手动执行本脚本** —— 首次调用任一功能脚本时,
+bootstrap.py 会自动检测并补齐依赖。本脚本用于:
+  - 想提前把依赖装好 (例如部署阶段一次性完成)
+  - 指定镜像源 / 只检查环境
+  - 自动安装被禁用 (IMAGE_TOOLKIT_NO_AUTO_INSTALL=1) 时的手动兜底
+
 用法:
   python setup_env.py            # 用清华镜像安装 (国内推荐)
   python setup_env.py --official # 用官方 PyPI

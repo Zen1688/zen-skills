@@ -24,6 +24,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# 首次调用时自动补齐依赖。**必须早于任何重依赖导入** ——
+# 依赖缺失时会切到已就绪的解释器重跑本脚本。
+from bootstrap import ensure_and_reexec  # noqa: E402
+ensure_and_reexec(need_ocr=True)
+
 from common import iter_images, pick_engine, list_engines, human_size  # noqa: E402
 import convert as conv_mod  # noqa: E402
 import ocr as ocr_mod  # noqa: E402

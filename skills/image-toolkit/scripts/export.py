@@ -16,6 +16,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import human_size, find_cjk_fonts, cjk_font_for_docx  # noqa: E402
 
+# 首次调用时自动补齐依赖。**必须早于任何重依赖导入** ——
+# 依赖缺失时会切到已就绪的解释器重跑本脚本。
+from bootstrap import ensure_and_reexec  # noqa: E402
+ensure_and_reexec(need_ocr=False)
+
 
 # ------------------------------------------------------------------ 数据准备
 

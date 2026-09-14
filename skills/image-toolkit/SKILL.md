@@ -13,8 +13,9 @@ agent_created: true
 
 | 特性 | 说明 |
 |---|---|
-| **零网络依赖** | 运行时无任何 HTTP 调用。OCR 模型随 pip 包落盘，装好即可断网使用 |
-| **国内可用** | 不依赖任何境外服务；首次安装支持清华/阿里镜像 |
+| **装完即用** | 首次调用自动补齐 Python 依赖，**无需手动 pip install** |
+| **零网络依赖** | 依赖装好后运行时无任何 HTTP 调用。OCR 模型随 pip 包落盘，可断网使用 |
+| **国内可用** | 不依赖任何境外服务；安装默认走清华镜像，内网可用本地 wheel 纯离线安装 |
 | **四大能力** | 格式转换 / 文字识别 / 内容分类 / 导出 Office |
 | **纯本地处理** | 图片不出本机，适合内网与敏感资料 |
 
@@ -55,6 +56,52 @@ python scripts/env.py --run pipeline.py ./图片目录 --out ./结果 --to docx,
 `env.py` 会自动探测 skill 位置与可用的 Python 解释器（含依赖完整性验证），
 因此 skill 搬到任何位置、装在任何 Python 下都能正常工作。
 
+## 依赖：首次调用自动安装
+
+**不需要手动 `pip install`。** 首次调用任一功能脚本时，`bootstrap.py` 会自动处理依赖：
+
+| 情况 | 行为 |
+|---|---|
+| 依赖齐全 | 立即返回。用 `find_spec` 探测，不导入重模块，开销可忽略 |
+| 缺依赖，但本机已有备好依赖的解释器 | 直接复用，不重复安装 |
+| 缺依赖，需要安装 | 建独立 venv → 装依赖 → 用新解释器重跑当前脚本 |
+| 有本地 wheel 目录 | 走 `--no-index` **纯离线安装**，完全不联网 |
+| 无网又无本地包 | 立即报错并打印三种补齐方式，**不挂起、不静默重试** |
+
+安装位置按优先级自动回退：
+
+| 优先级 | 位置 | 说明 |
+|---|---|---|
+| 1 | `$IMAGE_TOOLKIT_RUNTIME_DIR/venv` | 显式指定（内网可指向固定盘符） |
+| 2 | `~/.image-toolkit/venv` | **默认**：跨副本共享、只装一次、不污染宿主环境 |
+| 3 | `<skill>/.runtime/venv` | 用户目录不可写时回退 |
+| 4 | 当前解释器 | 最后兜底 |
+
+自动安装的覆盖范围因脚本而异：
+
+| 脚本 | 安装范围 | 原因 |
+|---|---|---|
+| `pipeline.py` / `ocr.py` / `classify.py` / `selftest.py` | 核心 + OCR（约 95MB） | 识别是主打能力，缺了会静默降级 |
+| `convert.py` / `export.py` | 只装核心（约 26MB） | 格式转换与导出本就不需要 OCR 引擎 |
+
+环境变量：
+
+| 变量 | 用途 |
+|---|---|
+| `IMAGE_TOOLKIT_NO_AUTO_INSTALL=1` | **关掉自动安装**，只检测并提示 |
+| `IMAGE_TOOLKIT_RUNTIME_DIR` | 指定运行时目录 |
+| `IMAGE_TOOLKIT_FIND_LINKS` | 本地 wheel 目录（多个用系统路径分隔符隔开） |
+| `IMAGE_TOOLKIT_MIRROR` | `tsinghua`（默认）/ `aliyun` / `ustc` / `official` |
+| `IMAGE_TOOLKIT_SKIP_OCR` | 只装核心依赖，不装 OCR 引擎 |
+| `IMAGE_TOOLKIT_QUIET` | 安静模式 |
+
+想提前一次装好（部署阶段常用）：
+
+```bash
+"$PY" "$SK/bootstrap.py"            # 缺什么装什么
+"$PY" "$SK/setup_env.py" --check    # 只查看依赖明细
+```
+
 ## 离线部署（内网机器）
 
 一条命令打包，一条命令安装：
@@ -76,6 +123,10 @@ python scripts/env.py --run pipeline.py ./图片目录 --out ./结果 --to docx,
 
 脚本会自动处理平台差异（依赖 wheel 标记、系统库、字体），并在跨平台搬运时**提前拦截**。
 详见 `references/offline-deploy.md`。
+
+> **只拷目录、不跑 install 的情况**：把 skill 目录拷到内网机器后，首次调用也会自动装依赖。
+> 此时把 `pack` 产出的 `packages/` 目录拷成 `<skill>/wheelhouse/`，
+> 引导器会自动发现并**完全离线**完成安装（放到 skill 同级目录或当前工作目录也可以）。
 
 ## 四大能力详解
 
@@ -186,10 +237,11 @@ python scripts/env.py --run pipeline.py ./图片目录 --out ./结果 --to docx,
 | 必需包 | Pillow, openpyxl, python-docx, reportlab, numpy |
 | OCR 引擎 | RapidOCR（推荐）或 Tesseract |
 | 中文字体 | Windows/macOS 系统自带；Linux 需装 fonts-wqy-microhei |
-| 网络 | **运行时不需要**；仅首次装包需要 |
+| 网络 | **运行时不需要**；仅首次装依赖需要（有本地 wheel 时可全程离线） |
 
-首次准备：`python scripts/setup_env.py --with-rapidocr`
-（该命令会一并打印当前平台与中文字体探测结果）
+依赖**无需手动准备**：首次调用任一脚本会自动安装，见上文「依赖：首次调用自动安装」。
+想提前装好或查看明细：`python scripts/bootstrap.py` / `python scripts/setup_env.py --check`
+（后者会一并打印当前平台与中文字体探测结果）
 
 ## 操作系统兼容性
 
@@ -238,7 +290,9 @@ python scripts/env.py --run pipeline.py ./图片目录 --out ./结果 --to docx,
 
 | 现象 | 处理 |
 |---|---|
-| 提示无可用 OCR 引擎 | 运行 `setup_env.py --with-rapidocr` |
+| 提示无可用 OCR 引擎 | 依赖没装全：跑 `python scripts/bootstrap.py`（会自动装 RapidOCR） |
+| 首次运行停在「安装依赖」 | 正常现象（约 95MB，含 OCR）。内网请先把 wheel 放到 `<skill>/wheelhouse/` |
+| 不想让它自动下载依赖 | 设 `IMAGE_TOOLKIT_NO_AUTO_INSTALL=1`，改为只提示不安装 |
 | 中文识别为乱码 | 确认用 RapidOCR 引擎；Tesseract 需装 `chi_sim` 语言包 |
 | 识别为空 | 图片可能确无文字，或分辨率过低；可先用 `convert.py` 放大 |
 | 分类不准 | 用 `--rules` 提供你的业务关键字；或调 `--threshold` |
@@ -249,14 +303,15 @@ python scripts/env.py --run pipeline.py ./图片目录 --out ./结果 --to docx,
 
 | 脚本 | 用途 |
 |---|---|
+| `bootstrap.py` | **依赖引导**：首次调用自动补齐依赖（含纯离线路径） |
 | `env.py` | **环境定位**：自动探测 skill 路径与 Python 解释器 |
 | `pipeline.py` | 一体化入口（转换→识别→分类→导出→归档） |
 | `convert.py` | 格式转换 |
 | `ocr.py` | 文字识别 |
 | `classify.py` | 内容分类 |
 | `export.py` | 导出 Office/PDF/TXT |
-| `setup_env.py` | 环境自检与装包 |
-| `deploy_offline.py` | 离线部署自动化 |
+| `setup_env.py` | 环境自检与装包（手动 / 提前安装用） |
+| `deploy_offline.py` | 离线部署自动化（打包 / 安装 / 诊断） |
 | `selftest.py` | 端到端自检（合成图跑全链路） |
 | `common.py` | 共享工具（枚举/引擎探测/跨平台字体） |
 
