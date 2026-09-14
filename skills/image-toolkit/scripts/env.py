@@ -71,7 +71,7 @@ def find_python(prefer_with_deps=True):
     # 1) 当前解释器
     cands.append((sys.executable, "当前运行的解释器"))
 
-    # 2) 托管 venv (跨平台路径)
+    # 2) 宿主托管的 venv (若存在则优先使用, 省去用户手动装依赖)
     home = Path.home()
     for rel in [
         ".workbuddy/binaries/python/envs/default/Scripts/python.exe",   # win
@@ -80,7 +80,7 @@ def find_python(prefer_with_deps=True):
     ]:
         p = home / rel
         if p.is_file():
-            cands.append((str(p), "WorkBuddy 托管 venv"))
+            cands.append((str(p), "宿主托管 venv"))
             break
 
     # 3) PATH

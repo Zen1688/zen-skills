@@ -6,6 +6,9 @@ agent_created: true
 
 # 图片处理工具箱 (image-toolkit)
 
+遵循 [Agent Skills](https://agentskills.io) 规范的自包含技能，可用于任何支持该规范的宿主环境。
+不依赖宿主专有接口；所有脚本通过自身路径与当前解释器自动定位运行环境，可自由迁移。
+
 ## 核心承诺
 
 | 特性 | 说明 |

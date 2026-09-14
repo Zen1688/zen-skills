@@ -1,0 +1,22 @@
+{
+  "name": "zen-skills",
+  "owner": {
+    "name": "Zen1688",
+    "url": "https://github.com/Zen1688"
+  },
+  "metadata": {
+    "description": "自研 Agent Skill 集合",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "image-toolkit",
+      "description": "离线图片处理工具箱：格式转换 / OCR 文字识别 / 内容分类 / 导出 Office 文档",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/image-toolkit"
+      ]
+    }
+  ]
+}
