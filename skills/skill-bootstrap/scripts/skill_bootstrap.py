@@ -129,7 +129,11 @@ def log(msg, err=False):
 def resolve(groups=None):
     """确定本次要处理的分组与模块清单。
 
-    优先级: 显式参数 > 环境变量 ${PREFIX}_GROUPS > deps.json 的 default_groups
+    优先级 (后者覆盖前者):
+      deps.json 的 default_groups  <  显式参数 groups  <  环境变量 ${PREFIX}_GROUPS
+
+    环境变量排在最后: 它是使用者/运维从外部下的指令, 应当能盖过入口代码里写死的
+    groups, 以便不改代码就能临时收窄要处理的依赖。
 
     返回 (分组名列表, [(模块名, pip 包名), ...])
     """
@@ -137,6 +141,8 @@ def resolve(groups=None):
     table = c.get("groups") or {}
 
     want = list(groups) if groups else list(c.get("default_groups") or [])
+    # 环境变量是外部指令, 有意覆盖上面算出的 want (见 docstring 的优先级说明);
+    # 不要按「显式参数优先」的直觉把它改回去。
     override = os.environ.get(env_name("GROUPS"))
     if override:
         want = [x.strip() for x in override.split(",") if x.strip()]
