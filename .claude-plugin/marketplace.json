@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "自研 Agent Skill 集合",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -25,6 +25,141 @@
       "strict": false,
       "skills": [
         "./skills/skill-bootstrap"
+      ]
+    },
+    {
+      "name": "agent-context-engineering",
+      "description": "智能体上下文工程：GSSC 流水线（Gather→Select→Structure→Compress）与分层上下文架构",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-context-engineering"
+      ]
+    },
+    {
+      "name": "agent-delivery-ops",
+      "description": "智能体交付与运维：部署方案、token 成本控制、可观测性与安全合规护栏",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-delivery-ops"
+      ]
+    },
+    {
+      "name": "agent-evaluation-loop",
+      "description": "智能体性能评估与改进闭环：评估系统搭建、基准测试、LLM Judge 与 CI/CD 门控",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-evaluation-loop"
+      ]
+    },
+    {
+      "name": "agent-framework-architecture",
+      "description": "自研智能体框架架构方法论：框架选型、分层架构与工具系统、多智能体编排",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-framework-architecture"
+      ]
+    },
+    {
+      "name": "agent-memory-rag-design",
+      "description": "智能体记忆系统与 RAG 设计：四类记忆架构、记忆整合与遗忘、检索增强链路",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-memory-rag-design"
+      ]
+    },
+    {
+      "name": "agent-paradigm-selection",
+      "description": "智能体经典范式选型与实现：ReAct / Plan-and-Solve / Reflection 的选择与落地",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-paradigm-selection"
+      ]
+    },
+    {
+      "name": "agent-protocol-selection",
+      "description": "智能体通信协议选型与集成：MCP / A2A / ANP 的选择、集成与多智能体通信",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-protocol-selection"
+      ]
+    },
+    {
+      "name": "agent-requirement-analysis",
+      "description": "Agent 需求分析与任务拆解：判断该不该用 Agent、任务/角色/工具拆解、边界与验收标准",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agent-requirement-analysis"
+      ]
+    },
+    {
+      "name": "agentic-rl-pipeline",
+      "description": "Agentic-RL 训练流水线：六阶段端到端流程、SFT/RL 数据格式、GRPO 与故障归因",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/agentic-rl-pipeline"
+      ]
+    },
+    {
+      "name": "doc-suite-architecture-audit",
+      "description": "成套文档架构级审阅：交叉引用解析、术语覆盖矩阵、结构密度量化，输出五维缺口清单",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/doc-suite-architecture-audit"
+      ]
+    },
+    {
+      "name": "markdown-bulk-edit",
+      "description": "大体量 Markdown 多处精确替换：脚本化批处理 + 写盘前命中数校验 + 改后反查清单",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/markdown-bulk-edit"
+      ]
+    },
+    {
+      "name": "markdown-to-pdf-merge",
+      "description": "Markdown 合订本 PDF：多文档按序合并、A4 中文排版、带真实页码的总纲目录",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/markdown-to-pdf-merge"
+      ]
+    },
+    {
+      "name": "multi-agent-orchestration",
+      "description": "多智能体协作编排与成本控制：角色拆分、数据契约、并发与成本治理",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/multi-agent-orchestration"
+      ]
+    },
+    {
+      "name": "name-availability-check",
+      "description": "命名可用性核验：Maven Central / GitHub / npm / PyPI / 商标 / 域名占用与撞名排查",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/name-availability-check"
+      ]
+    },
+    {
+      "name": "workbuddy-doc-to-markdown",
+      "description": "WorkBuddy 资料库在线文档导出为本地 Markdown：节点判定、原文抓取、组件标记转换",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/workbuddy-doc-to-markdown"
       ]
     }
   ]

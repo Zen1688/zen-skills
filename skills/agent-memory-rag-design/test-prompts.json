@@ -1,0 +1,53 @@
+{
+  "skill": "agent-memory-rag-design",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我的客服 Agent 每次用户重新打开对话就不记得对方说过的话了，连名字都忘了，该怎么解决？",
+      "expect": "应调用本 skill。应指出这是无状态问题（C1），需要引入记忆系统，并给出四类记忆分派与存储选型建议。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "我要给智能体设计记忆，工作记忆、情景记忆、语义记忆、感知记忆分别什么时候用？容量和 TTL 怎么设？",
+      "expect": "应调用本 skill。应给出 P4 分派规则、F3 评分公式，并指出工作记忆默认容量 50 条、TTL 60min。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "记忆整合 consolidate 的阈值是多少？什么时候该遗忘一条记忆？",
+      "expect": "应调用本 skill。应给出 working→episodic 0.7、episodic→semantic 0.8，以及遗忘阈值 importance 0.2 / time 30d / capacity 0.3（F7/P2）。"
+    },
+    {
+      "id": 4,
+      "type": "should_trigger",
+      "prompt": "我想搭一个文档问答的 RAG，文档怎么分块、怎么向量化、检索召回低该上 MQE 还是 HyDE？",
+      "expect": "应调用本 skill。应给出 F5 链路（MarkItDown→智能分块>1000字符触发→向量化→存储）与 P3 检索选型（一般 MQE、专业 MQE+HyDE、性能敏感仅基础检索）。"
+    },
+    {
+      "id": 5,
+      "type": "should_trigger",
+      "prompt": "多用户共用一个 Agent，记忆怎么隔离？用户要删除敏感信息，我直接删数据库记录够吗？",
+      "expect": "应调用本 skill。应说明隔离靠 user_id + rag_namespace（P1），并警告仅删记录不够，须同时清向量/图库（A3）。"
+    },
+    {
+      "id": 6,
+      "type": "decoy",
+      "prompt": "我的多智能体系统里一个 Agent 要把任务派给另外两个 Agent 协作，应该怎么编排？",
+      "expect": "不应调用本 skill。这是多智能体协作/编排问题，应转交 multi-agent-orchestration。"
+    },
+    {
+      "id": 7,
+      "type": "decoy",
+      "prompt": "怎么用强化学习让 Agent 自己学会更好的决策策略？",
+      "expect": "不应调用本 skill。这是强化学习训练流水线，应转交 agentic-rl-pipeline。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "我就做一个单轮翻译接口，需要上四层记忆架构吗？",
+      "expect": "应调用本 skill，但必须声明最小必要原则（P5/A2）：单轮无个性化需求不必引入记忆，四层架构是能力全集不是必选，避免过度设计。"
+    }
+  ]
+}

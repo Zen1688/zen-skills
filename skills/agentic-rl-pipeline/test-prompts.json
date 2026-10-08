@@ -1,0 +1,53 @@
+{
+  "skill": "agentic-rl-pipeline",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我想训练一个能多步决策、自己调搜索工具、还带记忆的 Agent，整体流程该怎么走？",
+      "expect": "应调用本 skill，给出端到端六阶段流水线（数据准备→SFT→SFT评估→GRPO→GRPO评估→部署）及 sft_accuracy_threshold: 0.40 放行门槛。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "GRPO 训练时奖励一直不涨，可能是什么原因？怎么排查？",
+      "expect": "应调用本 skill，给出 GRPO 三故障归因：lr 太小 / KL 惩罚太大 / 奖励设计不合理 / SFT 模型太差，并建议核查 KL 散度与梯度范数区间。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "怎么判断我的模型现在能不能进入 RL 阶段？SFT 完要验收什么？",
+      "expect": "应调用本 skill，给出预训练 vs SFT 输出对照验收标准：SFT 后输出须有 Step 与 Final Answer: 结构，且 SFT 评估准确率需达 0.40 才放行。"
+    },
+    {
+      "id": 4,
+      "type": "decoy",
+      "prompt": "我想用 CAMEL 让一个心理学家 Agent 和一个作家 Agent 合作写一篇电子书。",
+      "expect": "不应调用本 skill（这是多 Agent 协作编排，不是训练），应转交 multi-agent-orchestration。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "怎么给一个 Agent 设计基于 RAG 的长期记忆系统？",
+      "expect": "不应调用本 skill（这是记忆/检索架构设计，不是 RL 训练），应转交 agent-memory-rag-design。"
+    },
+    {
+      "id": 6,
+      "type": "boundary",
+      "prompt": "我只有 0.6B 模型、8GB 显存，能全量微调吗？预期能到多少准确率？",
+      "expect": "应调用本 skill，但必须声明资源门槛：0.6B 全量微调约需 12GB(FP16)，8GB 建议开 LoRA；并给出能力天花板预期（SFT 后 GSM8K 40-50%、RL 后 60-70%）。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "GRPO 训练显存 OOM 了，batch_size 和 num_generations 该怎么调？",
+      "expect": "应调用本 skill，给出 OOM 缓解方案：num_generations 8→4、batch_size 4→2、max_new_tokens 512→256、开梯度检查点与混合精度，并提醒 batch_size 必须能被 num_generations 整除。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "我跑了 50 条样本的小测试，准确率只有 5%，是不是这个方法不行？",
+      "expect": "应调用本 skill，但必须声明小样本陷阱（11.1.5）：只见过 0.7% 训练样本且只跑一轮，准确率极低属正常，不可用快速测试结果判断方法有效性。"
+    }
+  ]
+}

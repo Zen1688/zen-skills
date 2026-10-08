@@ -1,0 +1,53 @@
+{
+  "skill": "agent-evaluation-loop",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我想测一下我的智能体的工具调用能力，BFCL 的 simple、multiple、parallel、irrelevance 四个类别分别是什么、怎么跑？",
+      "expect": "应调用本 skill。应给出 F6 四类别难度阶梯定义，并建议从 simple 稳定后再上复杂类别（P4）。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "我生成了一批题目想评估质量，怎么用 LLM Judge 打分、怎么算 Win Rate、放行阈值设多少？",
+      "expect": "应调用本 skill。应给出 F12 四维三指标、F11 Win Rate、P9 放行阈值（Judge≥4.0、Win≥45%、Pass≥80%、人评≥90%）。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "GAIA 我的 Agent 总分还行但中等难度掉得厉害，怎么定位能力边界？",
+      "expect": "应调用本 skill。应给出 F8 诊断指标组：Level-wise Accuracy + Drop Rate ℓ→ℓ+1，用下降率定位边界（见 C 轨 10 样本推演）。"
+    },
+    {
+      "id": 4,
+      "type": "should_trigger",
+      "prompt": "评估结果出来后我想反推去改提示词、接 CI/CD 防止退化，怎么做闭环？",
+      "expect": "应调用本 skill。应给出 P10 闭环动作（调提示词/分析低分/参考高分/迭代）+ P11 集成 CI/CD 设阈值与报告归档。"
+    },
+    {
+      "id": 5,
+      "type": "should_trigger",
+      "prompt": "跑 bfcl-eval 报 numpy 版本冲突，装不上怎么办？",
+      "expect": "应调用本 skill。应给出 P13：需单独 `pip install \"numpy==1.26.4\" bfcl-eval`，因 bfcl-eval 强制 numpy<=2.0.0。"
+    },
+    {
+      "id": 6,
+      "type": "decoy",
+      "prompt": "我的 Agent 每次重启都忘记用户之前说过的话，怎么加记忆？",
+      "expect": "不应调用本 skill。这是记忆系统问题，应转交 agent-memory-rag-design。"
+    },
+    {
+      "id": 7,
+      "type": "decoy",
+      "prompt": "我该用 ReAct 还是 Plan-and-Execute 范式来构建我的 Agent？",
+      "expect": "不应调用本 skill。这是范式选择问题，应转交 agent-paradigm-selection。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "我的 BFCL 一键评估跑出 100% 满分，是不是说明 Agent 能力已经很强了？",
+      "expect": "应调用本 skill，但必须声明边界：仅跑 simple 类别会高估能力（A3），自定义格式可能是分数天花板（A2），需多类别横扫（P6）并从 simple 逐类验证才能下结论。"
+    }
+  ]
+}

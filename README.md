@@ -8,10 +8,47 @@
 
 ## 技能清单
 
+共 17 个技能，按用途分组。
+
+### 智能体工程（Agent Engineering）
+
+覆盖 Agent 产品从需求到运维的完整生命周期，外加若干横切方法论。
+
+| 技能 | 说明 |
+|---|---|
+| [agent-requirement-analysis](skills/agent-requirement-analysis/) | **生命周期的第一环**：判断需求该不该用 Agent、拆解任务/角色/工具、定义边界与验收标准 |
+| [agent-paradigm-selection](skills/agent-paradigm-selection/) | 经典范式选型：ReAct / Plan-and-Solve / Reflection 的适配判断与实现 |
+| [agent-framework-architecture](skills/agent-framework-architecture/) | 框架选型（AutoGen/AgentScope/CAMEL/LangGraph/自研）与分层架构设计 |
+| [agent-protocol-selection](skills/agent-protocol-selection/) | 通信协议选型：MCP / A2A / ANP 的集成与多智能体通信 |
+| [agent-memory-rag-design](skills/agent-memory-rag-design/) | 记忆系统（工作/情景/语义/感知）与 RAG 检索增强链路设计 |
+| [agent-context-engineering](skills/agent-context-engineering/) | 上下文工程：GSSC 流水线（Gather→Select→Structure→Compress）与分层上下文架构 |
+| [multi-agent-orchestration](skills/multi-agent-orchestration/) | 多智能体协作编排：角色拆分、数据契约、并发与成本治理 |
+| [agentic-rl-pipeline](skills/agentic-rl-pipeline/) | Agentic-RL 训练流水线：六阶段端到端流程、GRPO 与故障归因 |
+| [agent-evaluation-loop](skills/agent-evaluation-loop/) | 评估与改进闭环：评估系统三件套、基准测试、LLM Judge、CI/CD 门控 |
+| [agent-delivery-ops](skills/agent-delivery-ops/) | **生命周期的最后一环**：交付上线、token 成本控制、可观测性与安全合规护栏 |
+
+### 文档工程（Document Engineering）
+
+| 技能 | 说明 |
+|---|---|
+| [doc-suite-architecture-audit](skills/doc-suite-architecture-audit/) | 成套文档架构级审阅：交叉引用解析、术语覆盖矩阵、结构密度量化，输出五维缺口清单 |
+| [markdown-bulk-edit](skills/markdown-bulk-edit/) | 大体量 Markdown 多处精确替换：脚本化批处理 + 写盘前命中数校验 + 改后反查清单 |
+| [markdown-to-pdf-merge](skills/markdown-to-pdf-merge/) | 多 Markdown 合并为带总纲目录的 PDF：A4 中文排版、章前分页、目录页码可跳转 |
+| [workbuddy-doc-to-markdown](skills/workbuddy-doc-to-markdown/) | WorkBuddy 资料库在线文档落地为本地 Markdown：节点判定、原文抓取、组件标记转换 |
+
+### 工具箱（Toolkit）
+
 | 技能 | 说明 | 主要依赖 |
 |---|---|---|
 | [image-toolkit](skills/image-toolkit/) | 离线图片处理工具箱：格式转换 / OCR 文字识别 / 内容分类 / 导出 Office 文档。**全程无网络调用**，适配国内无网、内网环境 | Pillow, openpyxl, python-docx, reportlab, numpy, rapidocr-onnxruntime |
+| [name-availability-check](skills/name-availability-check/) | 命名可用性核验：查 Maven Central / GitHub / npm / PyPI / 商标 / 域名占用，识别撞名与显著性缺失 | 无（纯标准库） |
+
+### 开发支撑（Development）
+
+| 技能 | 说明 | 主要依赖 |
+|---|---|---|
 | [skill-bootstrap](skills/skill-bootstrap/) | 给 Python 编写的 skill 加上**运行时自举**：首次调用自动补齐依赖、路径自动探测，支持纯离线/内网安装。也是本仓库其他技能依赖引导机制的来源 | 无（纯标准库） |
+
 
 ---
 
@@ -60,18 +97,16 @@ cp -r zen-skills/skills/image-toolkit /c/Users/<你的用户名>/.workbuddy/skil
 
 **第二步：安装插件**
 
-```
-/plugin install image-toolkit@zen-skills
-```
-
-本仓库目前提供两个插件，按需安装：
+本仓库共提供 17 个插件，按需安装（插件名见上方技能清单）：
 
 ```
-/plugin install image-toolkit@zen-skills     # 离线图片处理工具箱
-/plugin install skill-bootstrap@zen-skills   # skill 依赖自动引导（开发用）
+/plugin install image-toolkit@zen-skills              # 离线图片处理工具箱
+/plugin install agent-requirement-analysis@zen-skills # Agent 需求分析与任务拆解
+/plugin install markdown-to-pdf-merge@zen-skills      # Markdown 合订本 PDF
+/plugin install skill-bootstrap@zen-skills            # skill 依赖自动引导（开发用）
 ```
 
-也可以用交互式菜单：`/plugin` → `Browse and install plugins` → `zen-skills` → `image-toolkit` → `Install now`。
+也可以用交互式菜单：`/plugin` → `Browse and install plugins` → `zen-skills` → 选择目标技能 → `Install now`。
 
 **非交互式（脚本化）等价命令**
 
@@ -80,7 +115,7 @@ claude plugin marketplace add Zen1688/zen-skills
 claude plugin install image-toolkit@zen-skills
 ```
 
-安装后，可以显式调用：
+安装后，可以显式调用（`<插件名>:<技能名>`）：
 
 ```
 /image-toolkit:image-toolkit

@@ -1,0 +1,47 @@
+{
+  "skill": "agent-delivery-ops",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我的 Agent 开发完了，怎么上线部署，还要控制成本别烧钱？",
+      "expect": "应调用本 skill：给出部署拓扑 + 成本护栏 + 可观测性 + 安全护栏的交付方案。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "Agent 上线后经常被限流、token 花得特别快，怎么控成本？",
+      "expect": "应调用本 skill：配置安全阀、预算上限、速率限制与降级策略。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "Agent 出错只能靠用户截图反馈，怎么加监控让错误能定位？",
+      "expect": "应调用本 skill：建日志/Trace/指标/告警可观测体系。"
+    },
+    {
+      "id": 4,
+      "type": "should_trigger",
+      "prompt": "Agent 挂了能删文件的 MCP 工具，怎么加权限和内容安全？",
+      "expect": "应调用本 skill：工具权限分级、输入输出校验、内容审核、隐私删除方案。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "我该用 ReAct 还是 Plan-and-Solve 范式？",
+      "expect": "不应调用本 skill，这是范式选型，转交 agent-paradigm-selection。"
+    },
+    {
+      "id": 6,
+      "type": "decoy",
+      "prompt": "怎么评估我 Agent 在 BFCL 基准上的工具调用能力？",
+      "expect": "不应调用本 skill，这是能力评估，转交 agent-evaluation-loop（交付迭代闭环只是引用它的结论）。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "这是个只给我自己用的小工具 Agent，需要上完整的五支柱吗？",
+      "expect": "应调用本 skill，但必须声明边界：小工具/内部原型可裁剪五支柱，只保留安全阀 + 日志即可。"
+    }
+  ]
+}

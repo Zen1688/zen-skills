@@ -1,0 +1,87 @@
+/* mdmerge_pdf 默认打印样式（A4 · 中文友好）
+ * 可通过 `mdmerge_pdf.py --css custom.css` 覆盖。
+ * 直接改本文件即可调整所有合订本的外观。
+ */
+
+@page { size: A4; margin: 17mm 15mm 18mm; }
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB",
+               "Source Han Sans SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 10.2pt; line-height: 1.72; color: #1b1f24;
+}
+
+/* ---------------- 标题：篇与章前分页，节不分页 ---------------- */
+h1 {
+  font-size: 23pt; line-height: 1.4; color: #12395e;
+  page-break-before: always; break-before: page;
+  border-bottom: 3px solid #12395e; padding-bottom: 10px; margin: 0 0 18px;
+}
+h1.no-break { page-break-before: avoid; break-before: avoid; }
+h2 {
+  font-size: 16pt; line-height: 1.45; color: #12395e;
+  page-break-before: always; break-before: page;
+  border-left: 5px solid #2f6ea8; padding: 2px 0 2px 11px; margin: 0 0 14px;
+}
+h2.no-break { page-break-before: avoid; break-before: avoid; margin-top: 22px; }
+h3 { font-size: 12.6pt; color: #1d4f7c; margin: 16px 0 6px;
+     page-break-after: avoid; break-after: avoid; }
+h4 { font-size: 11pt; color: #333; margin: 12px 0 4px; }
+
+p { margin: 6px 0; }
+ul, ol { margin: 6px 0 6px 22px; padding: 0; }
+li { margin: 2px 0; }
+hr { border: none; border-top: 1px solid #d6dee7; margin: 14px 0; }
+
+/* ---------------- 代码：等宽 + 自动换行防溢出 ---------------- */
+code {
+  font-family: "Cascadia Mono", "Sarasa Mono SC", Consolas, "Courier New", monospace;
+  font-size: 8.9pt; background: #f1f4f8; padding: 1px 3px; border-radius: 3px;
+}
+pre {
+  background: #f6f8fa; border: 1px solid #dbe3ec; border-left: 3px solid #9db8d2;
+  border-radius: 4px; padding: 8px 10px; margin: 8px 0;
+  font-size: 8.5pt; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-all; overflow-wrap: anywhere;
+}
+pre code { background: none; padding: 0; font-size: 8.5pt; }
+
+/* ---------------- 表格 ---------------- */
+table { border-collapse: collapse; width: 100%; font-size: 8.8pt;
+        margin: 8px 0; page-break-inside: auto; }
+th, td { border: 1px solid #c3d0dc; padding: 4px 6px; text-align: left;
+         vertical-align: top; word-break: break-word; }
+th { background: #eaf1f8; font-weight: 600; }
+tr { page-break-inside: avoid; }
+
+blockquote {
+  border-left: 4px solid #d3a868; background: #fdf8ef; color: #4a3a22;
+  margin: 8px 0; padding: 6px 12px; page-break-inside: avoid;
+}
+blockquote p { margin: 4px 0; }
+a { color: #1a5fa8; text-decoration: none; }
+
+/* ---------------- 封面 ---------------- */
+.cover { text-align: center; padding-top: 60mm; page-break-after: always; }
+.cover h1 { font-size: 34pt; border: none; page-break-before: avoid;
+            break-before: avoid; margin-bottom: 6px; }
+.cover .sub { font-size: 15pt; color: #2f6ea8; margin: 6px 0 26px; }
+.cover .meta { font-size: 11pt; color: #555; line-height: 2.0; }
+.cover .badge {
+  display: inline-block; border: 1px solid #2f6ea8; color: #2f6ea8;
+  border-radius: 14px; padding: 3px 14px; font-size: 10pt; margin-top: 18px;
+}
+
+/* ---------------- 总纲目录 ---------------- */
+.toc-row { clear: both; overflow: hidden; }
+.toc-l1 { font-size: 12.5pt; font-weight: 700; margin-top: 12px; color: #12395e; }
+.toc-l2 { margin-left: 20px; margin-top: 5px; font-size: 10.4pt; }
+.toc-secs {                    /* 节级两列紧凑排列，避免目录过长 */
+  margin-left: 20px; columns: 2; column-gap: 18px;
+  font-size: 8.9pt; color: #4a5563; margin-top: 2px; margin-bottom: 8px;
+  page-break-inside: auto;
+}
+.toc-secs div { margin: 1px 0; break-inside: avoid; }
+.toc-row .pg { float: right; font-variant-numeric: tabular-nums; color: #6b7280; }
+.toc-l1 .pg, .toc-l2 .pg { font-weight: 400; }

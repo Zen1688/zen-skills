@@ -1,0 +1,53 @@
+{
+  "skill": "agent-protocol-selection",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我的智能体要读取本地数据库和调用一个天气 API，应该接什么协议？",
+      "expect": "应调用本 skill，给出 MCP 选型结论，并建议按场景选传输方式（本地开发用 Stdio、远程用 HTTP/SSE）及工具描述写法。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "我想让一个接待员智能体把技术问题转给技术专家、把购买问题转给销售顾问，两个专家怎么通信协作？",
+      "expect": "应调用本 skill，给出 A2A 选型，并说明用 A2ATool 的 description 做语义路由而非硬编码 if-else。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我要搭建一个全网智能体自动发现彼此、用去中心化身份互相验证并协作的生态，用什么方案？",
+      "expect": "应调用本 skill，给出 ANP 选型（服务发现 + DID 验签），并同时声明 ANP 目前仅为概念框架、无成熟生态的边界。"
+    },
+    {
+      "id": 4,
+      "type": "decoy",
+      "prompt": "怎么用 LangChain 写一个 ReAct 智能体的主循环？",
+      "expect": "不应调用本 skill，这属于自研/复用智能体框架的范畴，应转交 agent-framework-architecture。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "我的多智能体要用什么角色提示词才能让它们好好配合？",
+      "expect": "不应调用本 skill，这是多智能体提示工程/编排问题，应转交 agent-framework-architecture 或 multi-agent-orchestration。"
+    },
+    {
+      "id": 6,
+      "type": "boundary",
+      "prompt": "我要把 ANP 直接用在生产的跨公司智能体调度系统里。",
+      "expect": "应调用本 skill，但必须声明 ANP 目前只是概念性协议框架、无成熟生态、不可当生产可用组件，并建议改用 MCP/A2A 或自行补齐信任与发现机制。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "我用 MCPTool 去连接一个远程 HTTP 的 MCP Server，结果连不上，怎么回事？",
+      "expect": "应调用本 skill，指出 Stdio/Memory 才用 MCPTool，HTTP/SSE/StreamableHTTP 必须降到底层 MCPClient，并给出正确传输选型。"
+    },
+    {
+      "id": 8,
+      "type": "should_trigger",
+      "prompt": "我同时挂了两个 MCP Server，注册后工具名冲突了，怎么办？",
+      "expect": "应调用本 skill，说明需给每个 MCPTool 指定唯一 name（会作为展开后工具名前缀，如 fs_read_file），并解释自动展开机制。"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "skill": "agent-context-engineering",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我的 Agent 跟用户聊了几轮之后就忘了用户之前说的名字，怎么做上下文工程解决遗忘？",
+      "expect": "应调用本 skill。指出这是无状态/缺记忆层问题（C1），交付分层上下文架构（TerminalTool/MemoryTool/NoteTool）与系统提示最小必要信息集，说明如何承载会话连续性。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "帮我把多源信息用 GSSC 流水线筛选压缩后组装进上下文窗口，具体四步怎么落地？",
+      "expect": "应调用本 skill。完整交付 Gather(多源+容错)→Select(relevance×0.7+recency×0.3 贪心)→Structure(五分区模板)→Compress(保结构压缩) 的实现骨架与代码化步骤。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我在维护一个大型代码库，需要跨多轮会话追踪状态、还能断点续传，上下文怎么设计？",
+      "expect": "应调用本 skill。给出分层上下文方案（C3）：TerminalTool 即时探索 + NoteTool 跨会话追踪 + ContextBuilder 筛选，并说明断点续传机制。"
+    },
+    {
+      "id": 4,
+      "type": "should_trigger",
+      "prompt": "我的系统提示写得特别长，但 Agent 反而更混乱，是过度硬编码还是太空泛？",
+      "expect": "应调用本 skill。解释系统提示两极陷阱（A2）：过度硬编码易碎 vs 过于空泛错假共享，给出最小必要信息集方法与先小提示试跑再补的策略。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "我要做一个能联网搜索最新手机报价的智能体，用 ReAct 还是 Plan-and-Solve？",
+      "expect": "不应调用本 skill。这是智能体范式选型问题，应转交 agent-paradigm-selection。"
+    },
+    {
+      "id": 6,
+      "type": "decoy",
+      "prompt": "用 LangChain 快速搭一个能聊天的小 bot 该怎么写？",
+      "expect": "不应调用本 skill。这是框架/应用搭建问题，不属于上下文工程 GSSC 范畴，应转交 agent-framework-architecture 或通用实现指导。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "我按 GSSC 做了 Select 和 Compress，但上线后 Agent 表现反而下降了，是不是漏选或压太狠？",
+      "expect": "应调用本 skill，但必须声明这是 GSSC 自身失效模式（A9）：Select 选错信息或 Compress 过度压缩导致信息丢失、表现下降，并给出验证手段（检查关键信息漏选、对权重/压缩率做 A/B 调优）。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "上下文窗口一直报 token 超限错误，我是不是该直接把窗口开到最大？",
+      "expect": "应调用本 skill，但必须声明：上下文窗口以 Token 计须精确管理（P7），且无限扩窗不能根治 context rot（A1，窗口越长回忆越差），正确做法是 Select 筛选 + Compress 保结构压缩，而非堆窗口。"
+    }
+  ]
+}

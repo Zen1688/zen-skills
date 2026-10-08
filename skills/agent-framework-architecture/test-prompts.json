@@ -1,0 +1,53 @@
+{
+  "skill": "agent-framework-architecture",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我要做一个客服多智能体系统，该选 LangGraph 还是 AutoGen？",
+      "expect": "应调用本 skill，给出四维对比（协作模式/控制方式/适用场景），并说明严格可追溯应 LangGraph、灵活对话协作可 AutoGen。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "我想自研一个教学用的智能体框架，应该怎么分层？",
+      "expect": "应调用本 skill，给出 HelloAgents 分层解耦架构（core/agents/tools）及分层解耦/职责单一/接口统一原则。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我的智能体跑起来后一直循环不停，怎么让它停下来？",
+      "expect": "应调用本 skill，说明设 max_turns / max_tool_iterations / max_steps 安全阀防无限循环，阈值依任务定。"
+    },
+    {
+      "id": 4,
+      "type": "decoy",
+      "prompt": "我的智能体要接入外部 API 工具，应该选什么通信协议？",
+      "expect": "不应调用本 skill，这是协议选型问题，应转交 agent-protocol-selection。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "怎么给 MCP Server 写清晰准确的工具描述？",
+      "expect": "不应调用本 skill，属于 MCP 工具集成细节，应转交 agent-protocol-selection。"
+    },
+    {
+      "id": 6,
+      "type": "boundary",
+      "prompt": "我想用 AutoGen 做一套严格的金融合规审批流程，每一步都要可审计。",
+      "expect": "应调用本 skill，但必须声明 AutoGen 是涌现式协作、对话不确定性难预测、缺错误栈难调试，严格可追溯流程应改 LangGraph。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "我只是想快速做个原型验证一下想法，需要自研框架吗？",
+      "expect": "应调用本 skill，但必须声明简单原型/快速验证应选自研框架之外的轻量框架，自研仅在需深度定制/教学透明/完全控制权时才划算。"
+    },
+    {
+      "id": 8,
+      "type": "should_trigger",
+      "prompt": "怎么把 Memory 和 RAG 还有 MCP 统一成一套工具接口？",
+      "expect": "应调用本 skill，给出'万物皆为工具'理念：用 BaseTool + ToolRegistry 将 Memory/RAG/RL/MCP 统一抽象为 Tool。"
+    }
+  ]
+}

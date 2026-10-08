@@ -1,0 +1,47 @@
+{
+  "skill": "agent-requirement-analysis",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我想用 Agent 做一个智能客服，帮我评估该不该用 Agent、具体怎么拆任务？",
+      "expect": "应调用本 skill：先做适用性四象限判定，再产出任务清单/角色/工具/验收标准。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "老板给了一段很模糊的业务需求，让我出一个 Agent 产品的技术方案，该从哪入手？",
+      "expect": "应调用本 skill：从适用性判定→任务拆解→能力单元→DoD 四步产出需求规格。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我们的 Agent 项目越做范围越大，现在验收一直扯皮，怎么重新界定边界？",
+      "expect": "应调用本 skill：重新界定范围约束（尤其「不做」清单）与可验证的 DoD。"
+    },
+    {
+      "id": 4,
+      "type": "decoy",
+      "prompt": "我的 ReAct 智能体陷入无限循环，怎么加终止条件？",
+      "expect": "不应调用本 skill，这是已实现 Agent 的调试问题，转交 agent-paradigm-selection（安全阀 max_steps）。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "AutoGen 和 LangGraph 该选哪个框架？",
+      "expect": "不应调用本 skill，这是框架选型，转交 agent-framework-architecture。"
+    },
+    {
+      "id": 6,
+      "type": "boundary",
+      "prompt": "这个需求里「工单自动分类」是规则可穷举的，「疑难工单意图识别」是模糊的，该怎么处理？",
+      "expect": "应调用本 skill，但必须给出「分环节用不同技术栈」的结论——确定性环节用规则引擎，模糊环节才用 Agent，而不是整包上 Agent。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "需求已经拆好任务了，现在想知道每个任务该用 ReAct 还是多智能体编排？",
+      "expect": "应调用本 skill 做能力单元设计的范式初判，但详细选型应转交 agent-paradigm-selection / multi-agent-orchestration。"
+    }
+  ]
+}

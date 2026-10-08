@@ -1,0 +1,53 @@
+{
+  "skill": "multi-agent-orchestration",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我要做一个旅行规划助手，需要景点搜索、天气查询、酒店预订、行程规划四个 Agent 协作，怎么做架构？",
+      "expect": "应调用本 skill，给出四 Agent 顺序协作流程（搜景点→查天气→定酒店→规划日程→组行程）与 Pydantic 自底向上 TripPlan 数据契约。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "怎么让游戏里的多个 NPC 各自有长期记忆，又不会多玩家并发时成本爆掉？",
+      "expect": "应调用本 skill，给出 NPC 双层记忆架构（WorkingMemory+EpisodicMemory）与'批量生成+即时响应'混合模式（NPCBatchGenerator）。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我想用多个 Agent 做深度研究，先规划子任务再搜索再写报告，进度想实时推给用户。",
+      "expect": "应调用本 skill，给出 TODO 驱动三阶段研究范式（Planner 拆 3-5 子任务→TaskAgent 写笔记→Writer 汇总）与 ToolAwareSimpleAgent 的 SSE 进度推送。"
+    },
+    {
+      "id": 4,
+      "type": "decoy",
+      "prompt": "我想在单个 Agent 里配置几个工具，让它自己决定调用顺序完成一个任务。",
+      "expect": "不应调用本 skill（属单 Agent 内部工具调用），应转交 agent-framework-architecture 或 agent-protocol-selection。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "怎么用 GRPO 训练一个会调用搜索工具的 Agent？",
+      "expect": "不应调用本 skill，应转交 agentic-rl-pipeline（这是训练/强化学习范畴，不是多 Agent 编排）。"
+    },
+    {
+      "id": 6,
+      "type": "boundary",
+      "prompt": "我打算用中央协调器星型拓扑来统一调度我的多个智能体，这样好管理。",
+      "expect": "应调用本 skill，但必须同时声明 A11 三大失败模式：单点故障导致整体瘫痪、通信过中心限制并发、增改智能体要动中心逻辑。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "我想用 AutoGen 让两个 Agent 自由对话，自动把任务聊出来，不预先规定每一步。",
+      "expect": "应调用本 skill，但必须声明这是涌现式协作（6.6），有对话不确定性致偏离/循环的风险，且存在'对话式调试'难题（只有对话历史无错误栈，A7）。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "我的前端要调多个后端 Agent，直接用 REST API 调就行吧，省得套一层 Agent？",
+      "expect": "应调用本 skill，但必须声明 A3 反例：直接调 API 绕过 Agent 会让 Agent 失去自主决策，应经 MCP 工具，且 MCP 实例需共享 auto_expand=True（P2）。"
+    }
+  ]
+}

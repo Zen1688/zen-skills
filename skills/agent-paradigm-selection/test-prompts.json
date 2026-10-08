@@ -1,0 +1,53 @@
+{
+  "skill": "agent-paradigm-selection",
+  "cases": [
+    {
+      "id": 1,
+      "type": "should_trigger",
+      "prompt": "我要做一个能联网搜索最新手机报价的智能体，任务带探索性还要适应实时结果，应该用 ReAct 还是别的范式？",
+      "expect": "应调用本 skill。给出 ReAct 选型依据（探索性、需外部工具/实时输入），并列出 ReAct 提示词四要素、ToolExecutor 注册与 _parse_output/_parse_action 正则、max_steps=5/temperature=0 等实现要点。"
+    },
+    {
+      "id": 2,
+      "type": "should_trigger",
+      "prompt": "帮用户规划一次多城市商务旅行，要同时订机票、酒店和租车，这种任务用 Plan-and-Solve 合适吗？",
+      "expect": "应调用本 skill。指出 Plan-and-Solve 计划是静态的、无重规划机制，纯 Plan-and-Solve 不适合含不可预知分支的任务，应重新权衡与 ReAct 的适用性，并给出两范式骨架对比。"
+    },
+    {
+      "id": 3,
+      "type": "should_trigger",
+      "prompt": "我需要生成关键业务代码，要求极高可靠性、不容出错，但实时性可以宽松，该用哪种范式？",
+      "expect": "应调用本 skill。给出 Reflection 选型依据（准确性/可靠性极高且实时性宽松），并交付 INITIAL/REFLECT/REFINE 三提示词规范、Memory 模块、max_iterations=3 与终止条件。"
+    },
+    {
+      "id": 4,
+      "type": "should_trigger",
+      "prompt": "我的 Plan-and-Solve 在某一步执行失败时直接任务终止了，而且没有重试，怎么回事？",
+      "expect": "应调用本 skill。指出这是 Plan-and-Solve 静态计划的已知失效（Planner 解析失败返 [] 即终止、无重规划），并给出改进方向或换型建议。"
+    },
+    {
+      "id": 5,
+      "type": "decoy",
+      "prompt": "怎么把一个 PDF 文件转成 Markdown？",
+      "expect": "不应调用本 skill。这是文档格式转换问题，不属于智能体范式选型范畴，应向文档转换类技能（如 markitdown-skill）转交。"
+    },
+    {
+      "id": 6,
+      "type": "decoy",
+      "prompt": "帮我用 GSSC 流水线把多源信息筛选压缩进上下文窗口。",
+      "expect": "不应调用本 skill。这是上下文工程（Gather→Select→Structure→Compress）问题，应转交 agent-context-engineering。"
+    },
+    {
+      "id": 7,
+      "type": "boundary",
+      "prompt": "我的 ReAct Agent 经常陷入原地打转、在局部最优里重复，怎么改？",
+      "expect": "应调用本 skill，但必须同时声明这是 ReAct 四大固有局限之一（步进决策缺全局长远规划、可能陷入局部最优），并说明其边界：复杂长程任务可考虑换 Plan-and-Solve 或 Reflection，而非仅靠调参解决。"
+    },
+    {
+      "id": 8,
+      "type": "boundary",
+      "prompt": "我的工具注册到 100 个之后，LLM 经常选错工具，提示词里全列出来了还是不行，这在本 skill 范围内能解决吗？",
+      "expect": "应调用本 skill 解释工具三要素与描述机制，但必须声明：当可调用工具增至 50 甚至 100 个时，把全部工具描述拼进提示词已不再有效（习题3），需从工程角度优化工具组织与检索，超出本 skill 单一范式实现范畴。"
+    }
+  ]
+}
