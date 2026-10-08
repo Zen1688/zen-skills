@@ -6,9 +6,27 @@
   },
   "metadata": {
     "description": "自研 Agent Skill 集合",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
+    {
+      "name": "zen-agent-suite",
+      "description": "AI Agent 全生命周期套件：从需求分析到交付运维，覆盖构建一个 AI Agent 产品的完整链路。安装本插件会一次性带装全部 10 个 Agent 技能；只想要其中一环时，请改为单独安装对应的技能插件。",
+      "source": "./bundles/zen-agent-suite",
+      "strict": false,
+      "dependencies": [
+        "agent-requirement-analysis",
+        "agent-paradigm-selection",
+        "agent-framework-architecture",
+        "agent-memory-rag-design",
+        "agent-context-engineering",
+        "agent-protocol-selection",
+        "multi-agent-orchestration",
+        "agent-evaluation-loop",
+        "agent-delivery-ops",
+        "agentic-rl-pipeline"
+      ]
+    },
     {
       "name": "image-toolkit",
       "description": "离线图片处理工具箱：格式转换 / OCR 文字识别 / 内容分类 / 导出 Office 文档",
@@ -29,7 +47,7 @@
     },
     {
       "name": "agent-context-engineering",
-      "description": "智能体上下文工程：GSSC 流水线（Gather→Select→Structure→Compress）与分层上下文架构",
+      "description": "智能体上下文工程：GSSC 流水线（Gather→Select→Structure→Compress）与分层上下文架构［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -38,7 +56,7 @@
     },
     {
       "name": "agent-delivery-ops",
-      "description": "智能体交付与运维：部署方案、token 成本控制、可观测性与安全合规护栏",
+      "description": "智能体交付与运维：部署方案、token 成本控制、可观测性与安全合规护栏［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -47,7 +65,7 @@
     },
     {
       "name": "agent-evaluation-loop",
-      "description": "智能体性能评估与改进闭环：评估系统搭建、基准测试、LLM Judge 与 CI/CD 门控",
+      "description": "智能体性能评估与改进闭环：评估系统搭建、基准测试、LLM Judge 与 CI/CD 门控［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -56,7 +74,7 @@
     },
     {
       "name": "agent-framework-architecture",
-      "description": "自研智能体框架架构方法论：框架选型、分层架构与工具系统、多智能体编排",
+      "description": "自研智能体框架架构方法论：框架选型、分层架构与工具系统、多智能体编排［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -65,7 +83,7 @@
     },
     {
       "name": "agent-memory-rag-design",
-      "description": "智能体记忆系统与 RAG 设计：四类记忆架构、记忆整合与遗忘、检索增强链路",
+      "description": "智能体记忆系统与 RAG 设计：四类记忆架构、记忆整合与遗忘、检索增强链路［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -74,7 +92,7 @@
     },
     {
       "name": "agent-paradigm-selection",
-      "description": "智能体经典范式选型与实现：ReAct / Plan-and-Solve / Reflection 的选择与落地",
+      "description": "智能体经典范式选型与实现：ReAct / Plan-and-Solve / Reflection 的选择与落地［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -83,7 +101,7 @@
     },
     {
       "name": "agent-protocol-selection",
-      "description": "智能体通信协议选型与集成：MCP / A2A / ANP 的选择、集成与多智能体通信",
+      "description": "智能体通信协议选型与集成：MCP / A2A / ANP 的选择、集成与多智能体通信［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -92,7 +110,7 @@
     },
     {
       "name": "agent-requirement-analysis",
-      "description": "Agent 需求分析与任务拆解：判断该不该用 Agent、任务/角色/工具拆解、边界与验收标准",
+      "description": "Agent 需求分析与任务拆解：判断该不该用 Agent、任务/角色/工具拆解、边界与验收标准［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -101,7 +119,7 @@
     },
     {
       "name": "agentic-rl-pipeline",
-      "description": "Agentic-RL 训练流水线：六阶段端到端流程、SFT/RL 数据格式、GRPO 与故障归因",
+      "description": "Agentic-RL 训练流水线：六阶段端到端流程、SFT/RL 数据格式、GRPO 与故障归因［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [
@@ -137,7 +155,7 @@
     },
     {
       "name": "multi-agent-orchestration",
-      "description": "多智能体协作编排与成本控制：角色拆分、数据契约、并发与成本治理",
+      "description": "多智能体协作编排与成本控制：角色拆分、数据契约、并发与成本治理［套件：zen-agent-suite］",
       "source": "./",
       "strict": false,
       "skills": [

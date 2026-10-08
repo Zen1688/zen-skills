@@ -177,13 +177,44 @@ tags:
 - **调参搜索**：网格搜索参数多时不可行；随机搜索可能错过最优；贝叶斯优化实现复杂需额外库（11.6.2）。
 - **已知自相矛盾**：`lora_alpha` 一处说"等于 rank"、一处说"2 倍"（11.3.2 vs 11.3.3(1)）；示例代码全用 2 倍（rank=8→alpha=16，rank=16→alpha=32）→ 以示例 2 倍为准，但非唯一定论。
 
-## 关联技能
+## 配套技能
 
-- [agent-paradigm-selection](./agent-paradigm-selection) — 训练数据的轨迹来自哪种范式
-- [agent-evaluation-loop](./agent-evaluation-loop) — 训练前后用同一评估闭环验证增益
-- [agent-framework-architecture](./agent-framework-architecture) — 训练产物如何回灌进框架
-- [multi-agent-orchestration](./multi-agent-orchestration) — 多智能体场景下的训练目标拆解
+本技能是 **AI Agent 全生命周期套件**（`zen-agent-suite`）的第 10/10 环。
+从需求分析到交付运维，覆盖构建一个 AI Agent 产品的完整链路。
 
+> **只装本技能不足以覆盖完整需求。** 若你正在做的是「创建 AI Agent/搭建智能体」这类完整任务，建议一并安装同套件的其他 9 个技能 —— 它们分别负责需求、设计、验证、运维等环节，缺环会导致流程断在中途。
+
+**同套件技能**（按推荐使用顺序）：
+
+| 阶段 | 技能 | 作用 |
+|---|---|---|
+| ① 需求 | `agent-requirement-analysis` | 判断该不该用 Agent、拆解任务与定义验收标准 |
+| ② 设计 | `agent-paradigm-selection` | 选 ReAct / Plan-and-Solve / Reflection 范式 |
+| ② 设计 | `agent-framework-architecture` | 框架选型与分层架构设计 |
+| ② 设计 | `agent-memory-rag-design` | 记忆系统与 RAG 检索链路设计 |
+| ② 设计 | `agent-context-engineering` | 上下文工程与 GSSC 流水线 |
+| ② 设计 | `agent-protocol-selection` | MCP / A2A / ANP 协议选型与集成 |
+| ② 设计 | `multi-agent-orchestration` | 多智能体协作编排与成本控制 |
+| ③ 验证 | `agent-evaluation-loop` | 评估系统搭建与改进闭环 |
+| ④ 运维 | `agent-delivery-ops` | 交付上线、成本控制与安全护栏 |
+| ⑤ 进阶 | `agentic-rl-pipeline` ← **本技能** | Agentic-RL 训练流水线（可选进阶） |
+
+**一键安装整套**：
+
+```bash
+# WorkBuddy（手工拷贝）
+git clone --depth 1 git@github.com:Zen1688/zen-skills.git
+cp -r zen-skills/skills/agent-* zen-skills/skills/multi-agent-orchestration \
+      ~/.workbuddy/skills/
+```
+
+```bash
+# Claude Code（插件市场）
+claude plugin marketplace add Zen1688/zen-skills
+claude plugin install zen-agent-suite@zen-skills
+```
+
+**只想装这一个**：单个技能可独立使用 —— 例如你的需求只是「Agentic-RL 训练流水线（可选进阶）」，装 `agentic-rl-pipeline` 即可，后续需要时再补装对应环节。
 ---
 
 > **来源**：蒸馏自《Hello-Agents：从零开始构建智能体》V1.0.3（Datawhale 开源教材）第 11 章（Agentic-RL 训练流水线）。

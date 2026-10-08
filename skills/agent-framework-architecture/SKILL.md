@@ -149,14 +149,44 @@ tools（base / registry / chain / async）
 - **OpenAI schema 限制（第7章 7.5.1节）**：不支持 `default` 字段，需塞进 description。
 - **成本代价**：自研需投入长期维护，仅在确有深度定制/教学透明/完全控制权、规避第三方黑盒/依赖/版本不稳定需求时划算；否则优先复用现成框架（轻量原型/高并发生产/严格可追溯各有推荐）。
 
-## 关联技能
+## 配套技能
 
-- [agent-protocol-selection](./agent-protocol-selection) — MCP / A2A / ANP 在框架中的工具化封装
-- [multi-agent-orchestration](./multi-agent-orchestration) — 框架之上的多智能体协作编排
-- [agent-memory-rag-design](./agent-memory-rag-design) — 记忆与检索模块的框架层承载
-- [agent-context-engineering](./agent-context-engineering) — 上下文组装层的框架位置
-- [agent-paradigm-selection](./agent-paradigm-selection) — ReAct / Plan-and-Solve / Reflection 的框架实现
+本技能是 **AI Agent 全生命周期套件**（`zen-agent-suite`）的第 3/10 环。
+从需求分析到交付运维，覆盖构建一个 AI Agent 产品的完整链路。
 
+> **只装本技能不足以覆盖完整需求。** 若你正在做的是「创建 AI Agent/搭建智能体」这类完整任务，建议一并安装同套件的其他 9 个技能 —— 它们分别负责需求、设计、验证、运维等环节，缺环会导致流程断在中途。
+
+**同套件技能**（按推荐使用顺序）：
+
+| 阶段 | 技能 | 作用 |
+|---|---|---|
+| ① 需求 | `agent-requirement-analysis` | 判断该不该用 Agent、拆解任务与定义验收标准 |
+| ② 设计 | `agent-paradigm-selection` | 选 ReAct / Plan-and-Solve / Reflection 范式 |
+| ② 设计 | `agent-framework-architecture` ← **本技能** | 框架选型与分层架构设计 |
+| ② 设计 | `agent-memory-rag-design` | 记忆系统与 RAG 检索链路设计 |
+| ② 设计 | `agent-context-engineering` | 上下文工程与 GSSC 流水线 |
+| ② 设计 | `agent-protocol-selection` | MCP / A2A / ANP 协议选型与集成 |
+| ② 设计 | `multi-agent-orchestration` | 多智能体协作编排与成本控制 |
+| ③ 验证 | `agent-evaluation-loop` | 评估系统搭建与改进闭环 |
+| ④ 运维 | `agent-delivery-ops` | 交付上线、成本控制与安全护栏 |
+| ⑤ 进阶 | `agentic-rl-pipeline` | Agentic-RL 训练流水线（可选进阶） |
+
+**一键安装整套**：
+
+```bash
+# WorkBuddy（手工拷贝）
+git clone --depth 1 git@github.com:Zen1688/zen-skills.git
+cp -r zen-skills/skills/agent-* zen-skills/skills/multi-agent-orchestration \
+      ~/.workbuddy/skills/
+```
+
+```bash
+# Claude Code（插件市场）
+claude plugin marketplace add Zen1688/zen-skills
+claude plugin install zen-agent-suite@zen-skills
+```
+
+**只想装这一个**：单个技能可独立使用 —— 例如你的需求只是「框架选型与分层架构设计」，装 `agent-framework-architecture` 即可，后续需要时再补装对应环节。
 ---
 
 > **来源**：蒸馏自《Hello-Agents：从零开始构建智能体》V1.0.3（Datawhale 开源教材）第 6、7 章（框架对比与自研 HelloAgents 架构）。

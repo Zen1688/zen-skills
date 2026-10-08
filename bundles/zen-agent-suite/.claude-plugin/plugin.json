@@ -1,0 +1,17 @@
+{
+  "name": "zen-agent-suite",
+  "version": "1.0.0",
+  "description": "AI Agent 全生命周期套件：从需求分析到交付运维，覆盖构建一个 AI Agent 产品的完整链路",
+  "dependencies": [
+    "agent-requirement-analysis",
+    "agent-paradigm-selection",
+    "agent-framework-architecture",
+    "agent-memory-rag-design",
+    "agent-context-engineering",
+    "agent-protocol-selection",
+    "multi-agent-orchestration",
+    "agent-evaluation-loop",
+    "agent-delivery-ops",
+    "agentic-rl-pipeline"
+  ]
+}

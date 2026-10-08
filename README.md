@@ -6,6 +6,50 @@
 
 ---
 
+## ⚠️ 技能之间有关系，别只装一个
+
+仓库里的技能**不是孤立的**。有 10 个 Agent 技能构成一个套件 —— **AI Agent 全生命周期套件（`zen-agent-suite`）**，它们分别负责需求、设计、验证、运维等环节，**一起用才能覆盖「创建一个 AI Agent」这类完整需求**。
+
+只装其中一个，流程会断在中途。装之前先看这张表：
+
+| 阶段 | 技能 | 作用 |
+|---|---|---|
+| ① 需求 | `agent-requirement-analysis` | 判断该不该用 Agent、拆解任务与定义验收标准 |
+| ② 设计 | `agent-paradigm-selection` | 选 ReAct / Plan-and-Solve / Reflection 范式 |
+| ② 设计 | `agent-framework-architecture` | 框架选型与分层架构设计 |
+| ② 设计 | `agent-memory-rag-design` | 记忆系统与 RAG 检索链路设计 |
+| ② 设计 | `agent-context-engineering` | 上下文工程与 GSSC 流水线 |
+| ② 设计 | `agent-protocol-selection` | MCP / A2A / ANP 协议选型与集成 |
+| ② 设计 | `multi-agent-orchestration` | 多智能体协作编排与成本控制 |
+| ③ 验证 | `agent-evaluation-loop` | 评估系统搭建与改进闭环 |
+| ④ 运维 | `agent-delivery-ops` | 交付上线、成本控制与安全护栏 |
+| ⑤ 进阶 | `agentic-rl-pipeline` | Agentic-RL 训练流水线（可选） |
+
+### 怎么装才不出错
+
+**要做完整件事（如创建 AI Agent）→ 一键装整套**
+
+```bash
+# Claude Code：一个 bundle 插件带装全部 10 个
+claude plugin marketplace add Zen1688/zen-skills
+claude plugin install zen-agent-suite@zen-skills
+
+# WorkBuddy：手工拷贝整套
+git clone --depth 1 git@github.com:Zen1688/zen-skills.git
+cp -r zen-skills/skills/agent-* zen-skills/skills/multi-agent-orchestration \
+      ~/.workbuddy/skills/
+```
+
+**只要某一环（如只做需求拆解）→ 单装即可，但要留意缺环**
+
+单个技能可独立使用，安装时其 `SKILL.md` 的「配套技能」段落会列出同套件的其他成员，需要时再补装。
+
+> **为什么不做强制带装**：Agent Skills 规范**没有依赖字段**（只允许 `name`/`description`/`license`/`compatibility`/`metadata`/`allowed-tools`），技能无法自行声明依赖。
+> Claude Code 的插件层虽支持 `dependencies`，但强制带装会让「只装一个」变得不可能，反而更糟。
+> 因此本仓库采用**软提醒 + bundle 入口**：整套走 bundle 一键装，单装则在文档层和对话中主动提示缺环。
+
+---
+
 ## 技能清单
 
 共 17 个技能，按用途分组。
@@ -13,6 +57,9 @@
 ### 智能体工程（Agent Engineering）
 
 覆盖 Agent 产品从需求到运维的完整生命周期，外加若干横切方法论。
+
+> 下表前 10 个技能构成 **AI Agent 全生命周期套件（`zen-agent-suite`）**，
+> 建议整套安装（见文首「技能之间有关系，别只装一个」）。
 
 | 技能 | 说明 |
 |---|---|
@@ -97,31 +144,43 @@ cp -r zen-skills/skills/image-toolkit /c/Users/<你的用户名>/.workbuddy/skil
 
 **第二步：安装插件**
 
-本仓库共提供 17 个插件，按需安装（插件名见上方技能清单）：
+本仓库共提供 18 个插件：1 个套件 bundle + 17 个单技能。
+
+**推荐：要做完整的 Agent 产品，直接装套件**
 
 ```
-/plugin install image-toolkit@zen-skills              # 离线图片处理工具箱
+/plugin install zen-agent-suite@zen-skills   # 一次带装全部 10 个 Agent 技能
+```
+
+**只要某一环，或非 Agent 类技能，按需单装**：
+
+```
 /plugin install agent-requirement-analysis@zen-skills # Agent 需求分析与任务拆解
+/plugin install image-toolkit@zen-skills              # 离线图片处理工具箱
 /plugin install markdown-to-pdf-merge@zen-skills      # Markdown 合订本 PDF
 /plugin install skill-bootstrap@zen-skills            # skill 依赖自动引导（开发用）
 ```
 
-也可以用交互式菜单：`/plugin` → `Browse and install plugins` → `zen-skills` → 选择目标技能 → `Install now`。
+也可以用交互式菜单：`/plugin` → `Browse and install plugins` → `zen-skills` → 选择目标 → `Install now`。
 
 **非交互式（脚本化）等价命令**
 
 ```bash
 claude plugin marketplace add Zen1688/zen-skills
-claude plugin install image-toolkit@zen-skills
+claude plugin install zen-agent-suite@zen-skills
 ```
 
-安装后，可以显式调用（`<插件名>:<技能名>`）：
+安装后可显式调用（`<插件名>:<技能名>`）：
 
 ```
 /image-toolkit:image-toolkit
 ```
 
 或者直接在对话里描述需求，由 Claude 依据技能描述自动触发。
+
+**套件 bundle 的依赖解析**
+
+`zen-agent-suite` 通过 Claude Code 原生的插件 `dependencies` 机制带装 10 个技能。安装时命令会列出实际装入了哪些依赖；若某个依赖后来丢失，`/reload-plugins` 会自动重装（前提是 marketplace 已注册）。
 
 **安装位置与更新**
 
@@ -189,6 +248,13 @@ skills/<skill-name>/
 └── assets/           # 可选：输出用素材（模板 / 图标 / 字体）
 ```
 
+仓库还有两个非技能目录：
+
+```
+bundles/<suite-name>/          # 套件 bundle 插件（仅含 .claude-plugin/plugin.json 的依赖清单）
+tools/                         # 维护脚本：依赖表 SSOT、批量替换、marketplace 生成
+```
+
 `SKILL.md` 的 frontmatter 最小形态：
 
 ```yaml
@@ -197,6 +263,36 @@ name: skill-name
 description: 技能做什么、什么时候用（决定 AI 何时触发该技能）
 ---
 ```
+
+---
+
+## 技能依赖维护（重要）
+
+技能之间的「配套关系」是**由脚本生成、不要手工编辑**，避免多处入口漂移。
+
+**单一事实来源**：[`tools/suite_deps.py`](tools/suite_deps.py) —— 套件成员、阶段标签、一句话定位都在这里。
+
+改动依赖关系后，按顺序重跑：
+
+```bash
+# 1. 校验依赖表自洽（套件成员是否完整、BLURB/STAGE 是否齐全）
+python tools/suite_deps.py --check
+
+# 2. 重新生成 10 个 SKILL.md 的「配套技能」段落
+#    （带写盘前命中数校验：每个文件必须恰好命中 1 次，否则整体中止不写入）
+python tools/apply_companion_sections.py
+
+# 3. 重新生成 marketplace.json（description 标注 + bundle 插件 + 版本号）
+python tools/update_marketplace.py
+```
+
+三个脚本都是**幂等**的，重复执行不会产生重复内容。
+
+> **为什么依赖不写在 SKILL.md frontmatter 里**：Agent Skills 规范只允许
+> `name`/`description`/`license`/`compatibility`/`metadata`/`allowed-tools`，
+> **没有依赖字段**。因此技能无法在元数据层声明依赖，只能落到两处：
+> 宿主安装层（`marketplace.json`，仅 Claude Code 读）与文档层（`SKILL.md` 正文，所有宿主都读）。
+> WorkBuddy 走手工拷贝、不读 marketplace.json，所以正文里的「配套技能」段落是它唯一的提醒通道。
 
 ---
 
@@ -212,6 +308,10 @@ git add skills/<new-skill>
 git commit -m "feat: 新增 <new-skill> 技能"
 git push
 ```
+
+**若新技能属于某个套件**（如加入 `zen-agent-suite`），还需在 `tools/suite_deps.py` 的
+`SUITES` / `BLURB` / `STAGE` 三处登记，然后重跑上面「技能依赖维护」的三个脚本，
+让所有技能的配套表格与 marketplace 自动同步。
 
 若新技能也要通过 Claude Code 安装，在 `.claude-plugin/marketplace.json` 的 `plugins` 数组里追加一条：
 
