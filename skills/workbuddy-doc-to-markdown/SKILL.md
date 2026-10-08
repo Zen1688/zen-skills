@@ -25,7 +25,13 @@ agent_created: true
 python3 "<LIB>/space_api.py" space.workspace.node-info --node-id <nodeId>
 ```
 
-- `<LIB>` = `<WorkBuddy 安装目录>/resources/app.asar.unpacked/resources/plugins/workbuddy-builtin/skills/library`
+- `<LIB>` = WorkBuddy 内置 `library` 技能的目录，位于 WorkBuddy 安装目录下的
+  `resources/app.asar.unpacked/resources/plugins/workbuddy-builtin/skills/library`。
+  安装目录因机而异，首次使用时定位一次即可（不要把结果写回 SKILL.md）：
+  ```bash
+  LIB="$(find "$HOME" "/c/Program Files" "/c/Program Files (x86)" -maxdepth 8 \
+       -type d -path '*workbuddy-builtin/skills/library' 2>/dev/null | head -1)"
+  ```
 - 从 `workbuddy.link/p/<id>` 或 `workbuddy.cn/space/d/<id>` 取出 `<id>`。**不要用 WebFetch/浏览器探这些链接**——登录墙只会返回登录页，据此推断的标题/类型都是编造。
 - 返回里 `kind` 定路由；`nodes` 数组是子节点 ID 列表，`url` 是编辑态链接。
 - kind=`web` 时，子节点往往是本次任务的产物集合（`nodes` 里逐个 `node-info` 看标题）。
@@ -90,6 +96,6 @@ for f in sorted(glob.glob('*.md')):
 
 ## 环境
 
-- Windows + Git Bash 下用托管 Python 绝对路径：
-  `$HOME/.workbuddy/binaries/python/versions/3.13.12/python.exe`
+- Windows + Git Bash 下建议用托管 Python 的绝对路径（避免 PATH 里混入其他 Python），形如
+  `$HOME/.workbuddy/binaries/python/versions/<版本号>/python.exe`。
 - 只用标准库，无三方依赖。

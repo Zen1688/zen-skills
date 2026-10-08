@@ -238,4 +238,4 @@ claude plugin install zen-agent-suite@zen-skills
 ---
 
 > **来源**：蒸馏自《Hello-Agents：从零开始构建智能体》V1.0.3（Datawhale 开源教材）第 1、4、5 章（ReAct / Plan-and-Solve / Reflection 三大经典范式）。
-原始蒸馏产物与知识卡片见 `<本地蒸馏输出目录>`。
+原始蒸馏产物与知识卡片留存于本地蒸馏输出目录，不随本仓库分发。
